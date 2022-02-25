@@ -1,0 +1,36 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: ttt-jddj-service
+
+
+jddj.shopSessionKeyList[0].appKey: e9c09ec7053f46cca43ce2d6409a0ff5
+jddj.shopSessionKeyList[0].accessToken: 9ca99446-6746-4856-afcf-e5250c57a83e
+jddj.shopSessionKeyList[0].appSecret: c8bba54d4d874c2bbbb0ebfd5b49f96e
+jddj.shopSessionKeyList[0].shopCode: test
+jddj.shopSessionKeyList[1].appKey: e9c09ec7053f46cca43ce2d6409a0ff5
+jddj.shopSessionKeyList[1].accessToken: 9ca99446-6746-4856-afcf-e5250c57a83e
+jddj.shopSessionKeyList[1].appSecret: c8bba54d4d874c2bbbb0ebfd5b49f96e
+jddj.shopSessionKeyList[1].shopCode: 100050897
+jddj.shopSessionKeyList[2].appKey: e9c09ec7053f46cca43ce2d6409a0ff5
+jddj.shopSessionKeyList[2].accessToken: 9ca99446-6746-4856-afcf-e5250c57a83e
+jddj.shopSessionKeyList[2].appSecret: c8bba54d4d874c2bbbb0ebfd5b49f96e
+jddj.shopSessionKeyList[2].shopCode: 12042658
+#sit
+template.detailId: 5fec29b4535405000199333a
+template.sourceId: 5fe2c32267689600010ecffc
+template.videoId: 5fd9a9b35b14120001835c7c
+#uat
+#template.detailId: 60053de54b976500015e55f6
+#template.sourceId: 5ff2cb95da5f640001179d88
+#template.videoId: 5ff2c9fdda5f640001179c9c
+#prod
+#template.detailId: 600540a67caede00010349d2
+#template.sourceId: 5ff2da61b2628500019a1f50
+#template.videoId: 5ff2dabff267bf00014f2b46
+
+attr.attrMap: {'articleNo':'货号','colorNumAttr':'色号','price':'价格','brand':'品牌','title':'标题'}
+
+tmall.name.fields: 款号,货号,型号
+
