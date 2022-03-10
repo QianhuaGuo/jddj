@@ -11,6 +11,7 @@ public class ConsumerTest {
 
     public ConsumerTest(){
         System.out.println("consumerTest...");
+        this.handMessage();
     }
 
     public void handMessage(){

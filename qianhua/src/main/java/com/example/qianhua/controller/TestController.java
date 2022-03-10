@@ -9,6 +9,7 @@ import com.example.qianhua.entity.TemplateEntity;
 import com.example.qianhua.entity.User;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TestService;
+import com.example.qianhua.utils.SpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -92,6 +93,8 @@ public class TestController extends BaseController{
 
     @PostMapping("/ttt")
     public void getdd(@RequestParam("name") String name){
+        String activeProfile = SpringUtils.getActiveProfile();
+
         String ss = OPERATE;
         System.out.println("ss:"+ss);
         System.out.println(JSONObject.toJSONString(testConfig.getShopSessionKeyList()));
