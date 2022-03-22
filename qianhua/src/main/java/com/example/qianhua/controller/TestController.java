@@ -7,6 +7,7 @@ import com.example.qianhua.config.TestConfig;
 import com.example.qianhua.entity.AttrEntity;
 import com.example.qianhua.entity.TemplateEntity;
 import com.example.qianhua.entity.User;
+import com.example.qianhua.exception.BizException;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TestService;
 import com.example.qianhua.utils.SpringUtils;
@@ -58,6 +59,8 @@ public class TestController extends BaseController{
 
     @PostMapping("/test/t1")
     public void test1(@RequestParam("testId") String testId){
+        if (testId.equals("111"))
+            throw new BizException("testId不能为111");
         System.out.println("test1:"+testId);
     }
     @PostMapping("/test/t2")
@@ -94,6 +97,7 @@ public class TestController extends BaseController{
     @PostMapping("/ttt")
     public void getdd(@RequestParam("name") String name){
         String activeProfile = SpringUtils.getActiveProfile();
+        Object bean = SpringUtils.getBean("com.baozun.midcenter.publish.proxy.client.internalAutoProxyDdcAdapterClient.jddj");
 
         String ss = OPERATE;
         System.out.println("ss:"+ss);
@@ -146,6 +150,12 @@ public class TestController extends BaseController{
     }
 
     public static void main(String[] args) {
+//        for (int i = 0;i<10;i++){
+//            if (i == 2){
+//                throw new BizException("22","发布异常");
+//            }
+//        }
+
         List<String> one;
         List<String> two;
         List<String> o = new ArrayList<>();

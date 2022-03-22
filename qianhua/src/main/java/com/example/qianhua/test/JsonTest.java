@@ -3,12 +3,38 @@ package com.example.qianhua.test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.qianhua.entity.User;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.*;
-
+@Data
 public class JsonTest {
+
+    private List<String> name;
+    private List<String> code;
+
     public static void main(String[] args) {
+
+        List<String> nameList = Arrays.asList("aa","bb","cc");
+        List<String> codeList = Arrays.asList("dd","ee","ff");
+        JsonTest jt = new JsonTest();
+        jt.setCode(codeList);
+        jt.setName(nameList);
+
+        System.out.println(JSONObject.toJSONString(jt));
+
+        System.out.println("++++++++++++++++++++++++++++++++");
+
+        SearchVo sv = new SearchVo();
+        sv.setSearchParam(JSONObject.toJSONString(jt));
+        System.out.println(sv.getSearchParam());
+
+        JsonTest jt2 = new JsonTest();
+        JSONObject jsonObject = JSONObject.parseObject(sv.getSearchParam());
+        jt2.setName((List<String>) jsonObject.get("name"));
+        jt2.setCode((List<String>) jsonObject.get("code"));
+
+
 
         Map<String,Object> mm = new HashMap<>();
 //        List<String> ls = Arrays.asList("aa","bb","cc");
