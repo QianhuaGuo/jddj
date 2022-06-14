@@ -4,9 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.qianhua.entity.User;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Data
 public class JsonTest {
 
@@ -15,11 +18,16 @@ public class JsonTest {
 
     public static void main(String[] args) {
 
+        List<String> levelList = Arrays.asList("GAP", "女装", "", "T恤/背心").stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        System.out.println(JSONObject.toJSONString(levelList));
+
         List<String> nameList = Arrays.asList("aa","bb","cc");
         List<String> codeList = Arrays.asList("dd","ee","ff");
         JsonTest jt = new JsonTest();
         jt.setCode(codeList);
         jt.setName(nameList);
+
+        TreeSet treeSet = new TreeSet();
 
         System.out.println(JSONObject.toJSONString(jt));
 

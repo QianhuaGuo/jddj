@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GrobalApiException {
 
-    @ExceptionHandler(BizException.class)
+    @ExceptionHandler(RuntimeException.class)
     public Result exceptionHandler(HttpServletRequest request,Exception e){
         log.info("出错了{}",e.getMessage(),e);
         return Result.fail(e.getMessage());

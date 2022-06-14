@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Function;
 
@@ -33,10 +34,12 @@ public class TestServiceImpl implements TestService {
         return new ArrayList<>(0);
     }
 
-//    @Async
+    @Async("threadPoolExecutor")
     @Override
     public void testAsync() throws InterruptedException {
+        System.out.println("service:"+Thread.currentThread().getName()+"--"+Thread.currentThread().getId());
         Thread.sleep(3000l);
+        CountDownLatch countDownLatch = new CountDownLatch(5);
         for (int i=0;i<5;i++){
             threadPoolExecutor.execute(()->{
                 try {
@@ -45,8 +48,18 @@ public class TestServiceImpl implements TestService {
                     System.out.println(Thread.currentThread().getName()+"--"+Thread.currentThread().getId());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }finally {
+                    countDownLatch.countDown();
+                    System.out.println("第"+countDownLatch.getCount()+"个线程执行完成！");
                 }
             });
         }
+        try{
+            countDownLatch.await();
+        }catch (Exception e){
+            System.out.println("出错了");
+        }
+
+        System.out.println("所有线程都执行完了");
     }
 }

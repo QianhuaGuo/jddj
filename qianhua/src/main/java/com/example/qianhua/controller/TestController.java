@@ -1,29 +1,28 @@
 package com.example.qianhua.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.qianhua.Result;
 import com.example.qianhua.config.AttrConfig;
 import com.example.qianhua.config.TemplateConfig;
 import com.example.qianhua.config.TestConfig;
-import com.example.qianhua.entity.AttrEntity;
-import com.example.qianhua.entity.TemplateEntity;
-import com.example.qianhua.entity.User;
+import com.example.qianhua.entity.*;
 import com.example.qianhua.exception.BizException;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TestService;
 import com.example.qianhua.utils.SpringUtils;
+import org.aspectj.weaver.tools.cache.CacheKeyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.*;
 import java.util.function.Function;
 
@@ -52,16 +51,28 @@ public class TestController extends BaseController{
     @Value("${tmall.name.fields}")
     private List<String> delField;
 
+    @PostMapping("/test/testSigno")
+    public void testSigno(@RequestBody @Valid CheckHh checkHh){
+
+        Uu u = new Uu();
+        System.out.println(u);
+        System.out.println(this);
+    }
+
     @PostMapping("/test/ttt")
     public void testInit(@RequestBody TestVo testVo){
         System.out.println(JSONObject.toJSONString(testVo));
     }
 
     @PostMapping("/test/t1")
-    public void test1(@RequestParam("testId") String testId){
-        if (testId.equals("111"))
+    public void test1(@RequestParam("testId") String testId) throws Exception {
+        if (testId.equals("111")){
             throw new BizException("testId不能为111");
-        System.out.println("test1:"+testId);
+        }else{
+            throw new Exception("ccccccc");
+        }
+
+//        System.out.println("test1:"+testId);
     }
     @PostMapping("/test/t2")
     public void test2(@RequestParam("testId") String testId){
@@ -73,13 +84,16 @@ public class TestController extends BaseController{
     }
     @PostMapping("/test/async")
     public String test4()throws Exception{
-        try{
-            List<String> ss = Arrays.asList("1","2");
-            System.out.println(ss.get(5));
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-//            throw new Exception();
-        }
+        System.out.println("controller:"+Thread.currentThread().getName()+"--"+Thread.currentThread().getId());
+//        try{
+//            List<String> ss = Arrays.asList("1","2");
+//            System.out.println(ss.get(5));
+//        }catch (Exception e){
+//            log.error(e.getMessage(),e);
+//            System.out.println(e.getMessage());
+//            System.out.println(e);
+////            throw new Exception();
+//        }
         testService.testAsync();
         System.out.println("ok.....");
         return "ok";
@@ -91,6 +105,12 @@ public class TestController extends BaseController{
         User u2 = new User();
         BeanUtils.copyProperties(u1,u2);
         System.out.println("name:"+name+"---"+nikeName);
+        return u1;
+    }
+
+    @GetMapping(value = "/test/ttt/qianhua")
+    public Object ttts(@RequestParam("name")String name){
+        User u1 = new User(name,3,"men");
         return u1;
     }
 
