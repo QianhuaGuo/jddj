@@ -3,7 +3,7 @@ server:
 spring:
   application:
     name: ttt-jddj-service
-
+spring.profiles.active: sit
 
 jddj.shopSessionKeyList[0].appKey: e9c09ec7053f46cca43ce2d6409a0ff5
 jddj.shopSessionKeyList[0].accessToken: 9ca99446-6746-4856-afcf-e5250c57a83e
@@ -22,7 +22,7 @@ template.detailId: 5fec29b4535405000199333a
 template.sourceId: 5fe2c32267689600010ecffc
 template.videoId: 5fd9a9b35b14120001835c7c
 #uat
-#template.detailId: 60053de54b976500015e55f6
+#template.detailId: 60053de54b976500015e55f6tmall.name.fields
 #template.sourceId: 5ff2cb95da5f640001179d88
 #template.videoId: 5ff2c9fdda5f640001179c9c
 #prod

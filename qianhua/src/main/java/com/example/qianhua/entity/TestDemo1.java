@@ -2,6 +2,7 @@ package com.example.qianhua.entity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mchange.v1.util.ListUtils;
+import org.springframework.util.StopWatch;
 
 
 import java.text.ParseException;
@@ -14,6 +15,11 @@ import java.util.List;
 public class TestDemo1 {
 
     public static void main(String[] args) throws ParseException {
+
+        Long a = 2147483649L;
+        int i = a.intValue();
+        System.out.println(i);
+
             String s = "ra:DATE:2021-12-20 15:50:21,DATE:2022-01-06 10:15:40";
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String[] split = s.split(",");
@@ -28,16 +34,15 @@ public class TestDemo1 {
         users.add(l1U2);
         users.add(l1U3);
         System.out.println(JSONObject.toJSONString(users));
-
-        users.sort(new Comparator<User>() {
-            @Override
-            public int compare(User o1, User o2) {
-                Integer age1 = o1.getAge();
-                Integer age2 = o2.getAge();
-                return age1.compareTo(age2);
-            }
+        StopWatch stopWatch = new StopWatch("test");
+        stopWatch.start("compare");
+        users.sort((o1, o2) -> {
+            Integer age1 = o1.getAge();
+            Integer age2 = o2.getAge();
+            return age1.compareTo(age2);
         });
-
+        stopWatch.stop();
+        System.out.println(stopWatch.prettyPrint());
         System.out.println(JSONObject.toJSONString(users));
     }
 }

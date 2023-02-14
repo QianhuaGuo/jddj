@@ -1,11 +1,15 @@
 package com.example.qianhua.exception;
 
 import com.example.qianhua.enums.ErrorCode;
+import lombok.Getter;
+import lombok.Setter;
 
 public class BizException extends RuntimeException{
     private static final long serialVersionUID = -1L;
 
     //错误码
+    @Getter
+    @Setter
     private String code;
 
     public BizException() {

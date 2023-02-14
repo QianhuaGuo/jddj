@@ -1,14 +1,18 @@
 package com.example.qianhua.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baozun.i18n.context.I18nLocaleContextHolder;
 import com.example.qianhua.Result;
 import com.example.qianhua.config.AttrConfig;
 import com.example.qianhua.config.TemplateConfig;
 import com.example.qianhua.config.TestConfig;
 import com.example.qianhua.entity.*;
+import com.example.qianhua.enums.SystemErrorCodeEnum;
 import com.example.qianhua.exception.BizException;
+import com.example.qianhua.filter.FilterManager;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TestService;
+import com.example.qianhua.utils.DozerUtils;
 import com.example.qianhua.utils.SpringUtils;
 import org.aspectj.weaver.tools.cache.CacheKeyResolver;
 import org.slf4j.Logger;
@@ -19,11 +23,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import java.util.stream.Collectors;
@@ -51,28 +63,127 @@ public class TestController extends BaseController{
     @Value("${tmall.name.fields}")
     private List<String> delField;
 
-    @PostMapping("/test/testSigno")
-    public void testSigno(@RequestBody @Valid CheckHh checkHh){
+//    @Value("${user.name}")
+//    private String username;
+//
+//    @Value("${user.sex}")
+//    private String sex;
 
-        Uu u = new Uu();
-        System.out.println(u);
-        System.out.println(this);
+    private static final ThreadLocal<String> threadlocal = new ThreadLocal<>();
+
+    private static final InheritableThreadLocal<String> inheritableThreadlocal = new InheritableThreadLocal<>();
+
+    /**@RequestBody @Valid CheckHh checkHh, BindingResult result*/
+    /**
+     * 可继承的threadLocal,子线程会继承父线程中的threadlocal,子线程修改子线程的threadlocal不会改变父线程的threadlocal
+     * @param testId
+     */
+    @PostMapping("/test/testSigno")
+    public void testSigno(String testId){
+
+//        Uu u = new Uu();
+//        System.out.println(u);
+//        System.out.println(this);
+//
+//        AttrEntity ae = new AttrEntity("100","11","200","jdj",true);
+//        MyAttrEntity mae = new MyAttrEntity();
+//
+//        DozerUtils.map(ae,mae);
+//        System.out.println(mae);
+
+        I18nLocaleContextHolder.setLanguage("en_US");
+
+        System.out.println("currentThread_name1:"+Thread.currentThread().getName());
+        System.out.println("currentThread_name1_lang:"+I18nLocaleContextHolder.getLanguage());
+        new Thread(()->{
+            try {
+                I18nLocaleContextHolder.setLanguage("zh_CN");
+                Thread.sleep(5000L);
+                System.out.println("currentThread_name2:"+Thread.currentThread().getName());
+                System.out.println("currentThread_name1_lang:"+I18nLocaleContextHolder.getLanguage());
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }finally {
+                I18nLocaleContextHolder.reset();
+            }
+        }).start();
+        System.out.println("currentThread_name1_lang:"+I18nLocaleContextHolder.getLanguage());
+        I18nLocaleContextHolder.reset();
+    }
+
+
+    @PostMapping("/test/threadtest")
+    public void threadtest(String testId){
+        threadlocal.set("currentThread_name1");
+        System.out.println("currentThread_name1:"+Thread.currentThread().getName());
+        System.out.println("currentThread_name1_lang:"+threadlocal.get());
+        new Thread(()->{
+            try {
+                threadlocal.set("currentThread_name2");
+                Thread.sleep(5000L);
+                System.out.println("currentThread_name2:"+Thread.currentThread().getName());
+                System.out.println("currentThread_name2_lang:"+threadlocal.get());
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }finally {
+                threadlocal.remove();
+            }
+            System.out.println("currentThread_name2_lang:"+threadlocal.get());
+        }).start();
+        System.out.println("currentThread_name1_lang:"+threadlocal.get());
+        threadlocal.remove();
+        System.out.println("currentThread_name1_lang:"+threadlocal.get());
+    }
+
+    @PostMapping("/test/inheritablethreadtest")
+    public void inheritabletest(String testId){
+        inheritableThreadlocal.set("currentThread_name1");
+        System.out.println("currentThread_name1:"+Thread.currentThread().getName());
+        System.out.println("currentThread_name1_lang:"+inheritableThreadlocal.get());
+        new Thread(()->{
+            try {
+                inheritableThreadlocal.set("currentThread_name2");
+                Thread.sleep(5000L);
+                System.out.println("currentThread_name2:"+Thread.currentThread().getName());
+                System.out.println("currentThread_name2_lang:"+inheritableThreadlocal.get());
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }finally {
+                inheritableThreadlocal.remove();
+            }
+            System.out.println("currentThread_name22_lang:"+inheritableThreadlocal.get());
+        }).start();
+        System.out.println("currentThread_name1_lang:"+inheritableThreadlocal.get());
+        inheritableThreadlocal.remove();
+        System.out.println("currentThread_name11_lang:"+inheritableThreadlocal.get());
     }
 
     @PostMapping("/test/ttt")
-    public void testInit(@RequestBody TestVo testVo){
+    public void testInit(@RequestBody @Valid TestVo testVo){
+        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        String lang = request.getHeader("lang");
+
+//        if (StringUtils.isEmpty(testVo.getTest())){
+//            throw new BizException(SystemErrorCodeEnum.PARAM_ERROR.getMsg());
+//        }
         System.out.println(JSONObject.toJSONString(testVo));
     }
 
-    @PostMapping("/test/t1")
-    public void test1(@RequestParam("testId") String testId) throws Exception {
-        if (testId.equals("111")){
-            throw new BizException("testId不能为111");
-        }else{
-            throw new Exception("ccccccc");
-        }
+    @PostMapping("/test/testI18")
+    public void testI18Code(@RequestBody TestI18 testI18){
+        System.out.println("...ok...");
+    }
 
-//        System.out.println("test1:"+testId);
+    @GetMapping("/test/t1")
+    public void test1(@RequestParam("testId") String testId,@RequestParam("testname") String testname) throws Exception {
+//        if (testId.equals("111")){
+//            throw new BizException("testId不能为111");
+//        }else{
+//            throw new Exception("ccccccc");
+//        }
+
+        System.out.println("test1:"+testId);
     }
     @PostMapping("/test/t2")
     public void test2(@RequestParam("testId") String testId){
@@ -94,9 +205,73 @@ public class TestController extends BaseController{
 //            System.out.println(e);
 ////            throw new Exception();
 //        }
+        FilterManager sington = FilterManager.getSington();
+
         testService.testAsync();
         System.out.println("ok.....");
         return "ok";
+    }
+
+    @PostMapping("/test/sleepThread")
+    public Result sleepThread(){
+        new Thread(()->{
+            try {
+                log.info("线程名称:{}，线程ID:{}",Thread.currentThread().getName(),Thread.currentThread().getId());
+                Thread.sleep(6000*100L);
+                log.info("线程跑完了！");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        return Result.success();
+    }
+
+    @PostMapping("/test/killThreadById")
+    public Result killThreadById(@RequestParam Long pid){
+
+        Boolean boo = this.killThread(pid);
+        if (boo){
+            return Result.success();
+        }
+
+
+        return Result.fail("失败");
+    }
+
+    private Boolean killThread(Long pid) {
+        ThreadGroup currentGroup = Thread.currentThread().getThreadGroup();
+
+        int noThreads = currentGroup.activeCount();
+
+        Thread[] lstThreads = new Thread[noThreads];
+
+        currentGroup.enumerate(lstThreads);
+
+        log.info("现有线程数" + noThreads);
+
+        for (int i = 0; i < noThreads; i++) {
+            String nm = lstThreads[i].getName();
+            Long id = lstThreads[i].getId();
+
+            log.info("线程号：" + i + " = " + nm);
+            log.info("线程号：" + i + " = " + id);
+
+//            if (nm.equals(name)) {
+//                lstThreads[i].interrupt();
+//
+//                return true;
+//
+//            }
+            if (pid.equals(id)) {
+                lstThreads[i].interrupt();
+
+                return true;
+
+            }
+
+        }
+
+        return false;
     }
 
     @PostMapping("/test/qianhua")

@@ -15,23 +15,4 @@ public class BaseController {
     public void initBinder(WebDataBinder binder, HttpServletRequest request){
         ControllerInit.initBinder(binder,request);
     }
-
-    public static void main(String[] args) {
-        LocalDateTime now = LocalDateTime.now();
-        long l = now.toEpochSecond(ZoneOffset.of("+8"));
-        System.out.println(now);
-        System.out.println(l);
-        test();
-        System.out.println("...");
-    }
-
-    private static void test() {
-        for (int i = 0;i<10;i++){
-            if (i == 5){
-                return;
-            }
-        }
-        System.out.println("借宿");
-    }
-
 }

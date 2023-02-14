@@ -5,6 +5,7 @@ import com.example.qianhua.enums.SystemErrorCodeEnum;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * 统一返回结果
@@ -19,6 +20,9 @@ public class Result<T> implements Serializable {
 
     //返回消息
     private String msg;
+
+    //随机码
+    private String randomCode;
 
     //返回结果
     private T data;
@@ -65,6 +69,14 @@ public class Result<T> implements Serializable {
         Result result = new Result();
         result.setCode(errorCode.getCode());
         result.setMsg(errorCode.getMsg());
+        return result;
+    }
+
+    public static Result fail(String code, String message, String randomCode) {
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(message);
+        result.setRandomCode(randomCode);
         return result;
     }
 

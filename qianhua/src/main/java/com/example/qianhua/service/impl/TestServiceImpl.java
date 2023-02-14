@@ -25,6 +25,7 @@ public class TestServiceImpl implements TestService {
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
 
+    @Override
     public List<User> handlerUser(User user, Function<User,List<User>> fff) {
         System.out.println(JSONObject.toJSONString(user));
         if (user != null){
@@ -38,7 +39,7 @@ public class TestServiceImpl implements TestService {
     @Override
     public void testAsync() throws InterruptedException {
         System.out.println("service:"+Thread.currentThread().getName()+"--"+Thread.currentThread().getId());
-        Thread.sleep(3000l);
+        Thread.sleep(3000L);
         CountDownLatch countDownLatch = new CountDownLatch(5);
         for (int i=0;i<5;i++){
             threadPoolExecutor.execute(()->{

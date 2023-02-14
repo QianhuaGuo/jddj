@@ -15,8 +15,8 @@ public class ThreadPoolConfig {
 
     @Bean("threadPoolExecutor")
     public ThreadPoolExecutor getThreadPool(){
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5,
-                5,
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2,
+                Runtime.getRuntime().availableProcessors()*3,
                 60L,
                 TimeUnit.MILLISECONDS,
                 new LinkedBlockingDeque<>(10),
