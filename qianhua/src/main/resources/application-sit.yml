@@ -1,1 +1,10 @@
 user.name: huazai
+
+#folder.zhMarkMap: {'生成图':'加工后的图片','原图':'未加工的图片','PDP':'详情页','sizeTable':'尺码表'}
+
+folder.zhMarkMap: {'[原生图]':'加工后的图片','RawPic':'未加工的图片','PDP':'详情页','sizeTable':'尺码表'}
+
+folder.enMarkMap: {'[原生图]':'Processed picture','RawPic':'Raw pictures','PDP':'Details page','sizeTable':'Size chart'}
+
+#类上加注解@PropertySource(value = "classpath:application-sit.yml",encoding = "UTF-8")
+status: { "001":"正常","002":"异常"}

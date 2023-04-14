@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonObject;
 import lombok.Data;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 public class ThisDemo {
     private String name;
@@ -24,6 +27,13 @@ public class ThisDemo {
         ThisDemo d = new ThisDemo();
         d.main();
         System.out.println(JSONObject.toJSONString(d));
+
+        List<String> l = Arrays.asList("a","b","c","d");
+        for (int i = 0;i<l.size();i++){
+            System.out.println(l.get(i));
+            if (l.get(i).equals("c")) break;
+        }
+        System.out.println("end...");
 
     }
 }

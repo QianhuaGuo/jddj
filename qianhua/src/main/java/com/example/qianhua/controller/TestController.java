@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baozun.i18n.context.I18nLocaleContextHolder;
 import com.example.qianhua.Result;
 import com.example.qianhua.config.AttrConfig;
+import com.example.qianhua.config.FolderMarkMapConfig;
 import com.example.qianhua.config.TemplateConfig;
 import com.example.qianhua.config.TestConfig;
 import com.example.qianhua.entity.*;
@@ -14,15 +15,16 @@ import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TestService;
 import com.example.qianhua.utils.DozerUtils;
 import com.example.qianhua.utils.SpringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.aspectj.weaver.tools.cache.CacheKeyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 import static com.example.qianhua.entity.Constant.OPERATE;
 
 @RestController
+@PropertySource(value = "classpath:application-sit.yml",encoding = "UTF-8")
 public class TestController extends BaseController{
 
     private static final Logger log = LoggerFactory.getLogger(TestController.class);
@@ -62,6 +65,9 @@ public class TestController extends BaseController{
 
     @Value("${tmall.name.fields}")
     private List<String> delField;
+
+    @Value("#{${status:{}}}")
+    private Map<String,String> status;
 
 //    @Value("${user.name}")
 //    private String username;
@@ -115,13 +121,13 @@ public class TestController extends BaseController{
     @PostMapping("/test/threadtest")
     public void threadtest(String testId){
         threadlocal.set("currentThread_name1");
-        System.out.println("currentThread_name1:"+Thread.currentThread().getName());
-        System.out.println("currentThread_name1_lang:"+threadlocal.get());
+//        System.out.println("currentThread_name1:"+Thread.currentThread().getName());
+//        System.out.println("currentThread_name1_lang:"+threadlocal.get());
         new Thread(()->{
             try {
                 threadlocal.set("currentThread_name2");
                 Thread.sleep(5000L);
-                System.out.println("currentThread_name2:"+Thread.currentThread().getName());
+//                System.out.println("currentThread_name2:"+Thread.currentThread().getName());
                 System.out.println("currentThread_name2_lang:"+threadlocal.get());
             } catch (InterruptedException exception) {
                 exception.printStackTrace();
@@ -212,6 +218,12 @@ public class TestController extends BaseController{
         return "ok";
     }
 
+    @PostMapping("/test/async1")
+    public String test5(String a) throws Exception{
+        testService.test5Async();
+        return "ok";
+    }
+
     @PostMapping("/test/sleepThread")
     public Result sleepThread(){
         new Thread(()->{
@@ -283,10 +295,65 @@ public class TestController extends BaseController{
         return u1;
     }
 
-    @GetMapping(value = "/test/ttt/qianhua")
-    public Object ttts(@RequestParam("name")String name){
-        User u1 = new User(name,3,"men");
-        return u1;
+    //内存做分页
+    @PostMapping(value = "/test/ttt/qianhua")
+    public List<Integer> ttts(int pageIndex,int pageSize){
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        list.add(10);
+        list.add(11);
+        list.add(12);
+        list.add(13);
+        list.add(14);
+        list.add(15);
+        List<Integer> integers = currentPageData(pageIndex, pageSize, list.size(), list);
+        return integers;
+    }
+
+    @Resource
+    private FolderMarkMapConfig folderMarkMapConfig;
+
+
+
+
+    @GetMapping(value = "/test/ttt/testConfig")
+    public String testCofig(String aa){
+        String s = status.get("001");
+        System.out.println("s:"+s);
+        System.out.println(JSONObject.toJSONString(status));
+        String lang = "zh";
+        if ("zh".equals(aa)){
+            return JSONObject.toJSONString(folderMarkMapConfig.getZhMarkMap());
+        }else{
+            return JSONObject.toJSONString(folderMarkMapConfig.getEnMarkMap());
+        }
+    }
+
+    @GetMapping(value = "/test/ttt/testLog")
+    public String TestLog(String aa){
+        testService.testLog();
+        return "ok";
+    }
+
+    static List<Integer> currentPageData(Integer pageIndex, Integer pageSize, long count, List<Integer> list) {
+        if (CollectionUtils.isEmpty(list)){
+            return Collections.emptyList();
+        }
+        List<Integer> current = new ArrayList<>();
+        int min = (pageIndex-1) * pageSize;
+        int max = pageIndex * pageSize - 1;
+        for (int i = min ; i<=max && i< count ;i++){
+            current.add(list.get(i));
+        }
+        return current;
     }
 
     @PostMapping("/ttt")

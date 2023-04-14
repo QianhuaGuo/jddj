@@ -9,4 +9,8 @@ public interface TestService {
     List<User> handlerUser(User user, Function<User,List<User>> ff);
 
     void testAsync() throws InterruptedException;
+
+    void test5Async();
+
+    void testLog();
 }
