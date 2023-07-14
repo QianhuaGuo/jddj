@@ -1,6 +1,7 @@
 package com.example.qianhua.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.qianhua.exception.BizException;
 import com.mchange.v1.util.ListUtils;
 import org.springframework.util.StopWatch;
 
@@ -16,6 +17,30 @@ public class TestDemo1 {
 
     public static void main(String[] args) throws ParseException {
 
+
+
+
+        String tu1 = "123.jpg";
+//        String tu1 = "asdf_dsf_1.jpg";
+
+        Integer sort =null;
+        System.out.println(sort);
+        boolean contains = tu1.contains(".");
+        if (contains){
+            if (tu1.contains("_")){
+                sort = Integer.valueOf(tu1.substring(tu1.lastIndexOf("_")+1, tu1.lastIndexOf(".")));
+            }else{
+                sort = Integer.valueOf(tu1.substring(0, tu1.lastIndexOf(".")));
+            }
+        }else{
+            if (!tu1.contains("_")){
+                sort = Integer.valueOf(tu1);
+            }
+        }
+
+        System.out.println(sort);
+
+
         Long a = 2147483649L;
         int i = a.intValue();
         System.out.println(i);
@@ -27,12 +52,14 @@ public class TestDemo1 {
             Date endTime = sdf.parse(split[1].substring(split[1].indexOf("DATE:")+5));
 
         List<User> users = new ArrayList<>();
-        User l1U1 = new User("张三",15,"men");
-        User l1U2 = new User("李四",16,"men");
-        User l1U3 = new User("小芳",12,"women");
+        User l1U1 = new User("张三",15,"men",true);
+        User l1U2 = new User("李四",16,"men",true);
+        User l1U3 = new User("小芳",12,"women",true);
         users.add(l1U1);
         users.add(l1U2);
         users.add(l1U3);
+
+
         System.out.println(JSONObject.toJSONString(users));
         StopWatch stopWatch = new StopWatch("test");
         stopWatch.start("compare");
@@ -44,5 +71,18 @@ public class TestDemo1 {
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
         System.out.println(JSONObject.toJSONString(users));
+
+        try{
+            if (users.stream().allMatch(aa -> aa.getIsStudent())){
+                throw new BizException("自定义错误数据!");
+//                System.out.println("全是true");
+            }else{
+                System.out.println("有false");
+            }
+        }catch (Exception ex){
+            System.out.println("sdfsdf"+ex.getMessage());
+        }
+
+
     }
 }

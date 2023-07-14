@@ -69,6 +69,9 @@ public class TestController extends BaseController{
     @Value("#{${status:{}}}")
     private Map<String,String> status;
 
+    @Value("${g-sdk.appKey}")
+    private String appKey;
+
 //    @Value("${user.name}")
 //    private String username;
 //
@@ -178,7 +181,8 @@ public class TestController extends BaseController{
 
     @PostMapping("/test/testI18")
     public void testI18Code(@RequestBody TestI18 testI18){
-        System.out.println("...ok...");
+
+        System.out.println("...ok..."+appKey);
     }
 
     @GetMapping("/test/t1")

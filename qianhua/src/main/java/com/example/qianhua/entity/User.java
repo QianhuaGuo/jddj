@@ -20,6 +20,21 @@ public class User {
     private String name;
     private Integer age;
     private String sex;
+    private Boolean isStudent;
+
+    public User(String name, Integer age, String sex) {
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
+    }
+
+//    public User(String name, Integer age, String sex, Boolean isStudent) {
+//        this.name = name;
+//        this.age = age;
+//        this.sex = sex;
+//        this.isStudent = isStudent;
+//    }
+
 
     public static void main(String[] args) {
         Field[] declaredFields = User.class.getDeclaredFields();

@@ -33,4 +33,6 @@ template.videoId: 5fd9a9b35b14120001835c7c
 attr.attrMap: {'articleNo':'货号','colorNumAttr':'色号','price':'价格','brand':'品牌','title':'标题'}
 
 tmall.name.fields: 款号,货号,型号
+oauth.appKey: ddc-price-control-sit
+g-sdk.appKey: ${oauth.appKey}
 
