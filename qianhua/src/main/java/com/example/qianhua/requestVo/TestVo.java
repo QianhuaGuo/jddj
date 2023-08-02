@@ -26,6 +26,8 @@ public class TestVo extends TestBTO{
     private String xx;
 
     public static void main(String[] args) {
+
+        System.out.println("version:1");
         List<String> l = new ArrayList<>();
 
         l.add(null);
