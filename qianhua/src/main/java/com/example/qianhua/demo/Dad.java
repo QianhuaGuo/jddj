@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,13 @@ public class Dad implements Serializable {
 
         Dad.printTrack();
     }
+
+//    public static void main(String[] args) throws UnsupportedEncodingException {
+//        String name = "货品待审价格示例.xlsx";
+//
+//        String encode = java.net.URLEncoder.encode(name, "utf-8");
+//        System.out.println(encode);
+//    }
 
 
     /**
