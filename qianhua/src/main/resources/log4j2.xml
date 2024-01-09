@@ -72,7 +72,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="debug">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="debug_appender"/>
             <AppenderRef ref="info_appender"/>

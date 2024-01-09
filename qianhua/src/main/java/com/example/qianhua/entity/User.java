@@ -3,12 +3,9 @@ package com.example.qianhua.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sun.misc.Contended;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +34,12 @@ public class User {
 
 
     public static void main(String[] args) {
+
+        String PULL_CATEGORY_PROPERTY_KEY = "%s_PULL_CATEGORY_PROPERTY_%s";
+
+        System.out.println(String.format(PULL_CATEGORY_PROPERTY_KEY,"TMALL","001SSXXX"));
+
+
         Field[] declaredFields = User.class.getDeclaredFields();
         Constructor<?>[] declaredConstructors = User.class.getDeclaredConstructors();
         User.class.getClasses();

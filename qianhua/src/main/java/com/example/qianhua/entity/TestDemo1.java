@@ -3,6 +3,7 @@ package com.example.qianhua.entity;
 import com.alibaba.fastjson.JSONObject;
 import com.example.qianhua.exception.BizException;
 import com.mchange.v1.util.ListUtils;
+import lombok.Getter;
 import org.springframework.util.StopWatch;
 
 
@@ -13,11 +14,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+@Getter
 public class TestDemo1 {
+    Boolean istest = Boolean.TRUE;
 
     public static void main(String[] args) throws ParseException {
 
-
+        TestDemo1 t1 = new TestDemo1();
+        if (t1.getIstest() == Boolean.TRUE){
+            System.out.println("可以");
+        }
 
 
         String tu1 = "123.jpg";

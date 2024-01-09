@@ -3,41 +3,40 @@ package com.example.qianhua.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baozun.i18n.context.I18nLocaleContextHolder;
 import com.example.qianhua.Result;
-import com.example.qianhua.config.AttrConfig;
-import com.example.qianhua.config.FolderMarkMapConfig;
-import com.example.qianhua.config.TemplateConfig;
-import com.example.qianhua.config.TestConfig;
+import com.example.qianhua.config.*;
 import com.example.qianhua.entity.*;
-import com.example.qianhua.enums.SystemErrorCodeEnum;
 import com.example.qianhua.exception.BizException;
 import com.example.qianhua.filter.FilterManager;
+import com.example.qianhua.jddc.util.RequestUtils;
 import com.example.qianhua.requestVo.TestVo;
+import com.example.qianhua.service.TaskImpl;
 import com.example.qianhua.service.TestService;
-import com.example.qianhua.utils.DozerUtils;
+import com.example.qianhua.service.UserService;
 import com.example.qianhua.utils.SpringUtils;
+import com.example.qianhua.utils.VideoUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
-import org.aspectj.weaver.tools.cache.CacheKeyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Function;
 
 import java.util.stream.Collectors;
@@ -58,7 +57,13 @@ public class TestController extends BaseController{
     private AttrConfig attrConfig;
 
     @Resource
+    private TestConfig1 testConfig1;
+
+    @Resource
     private ThreadPoolTaskExecutor myThreadPool;
+
+    @Resource
+    private ThreadPoolTaskExecutor MythreadPoolTaskExecutor;
 
     @Autowired
     private TestService testService;
@@ -72,6 +77,16 @@ public class TestController extends BaseController{
     @Value("${g-sdk.appKey}")
     private String appKey;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+//    @Qualifier("userServiceImpl2")
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TaskImpl task;
+
 //    @Value("${user.name}")
 //    private String username;
 //
@@ -81,6 +96,42 @@ public class TestController extends BaseController{
     private static final ThreadLocal<String> threadlocal = new ThreadLocal<>();
 
     private static final InheritableThreadLocal<String> inheritableThreadlocal = new InheritableThreadLocal<>();
+
+    private static final List<String> t3AllowRemoveFields = new ArrayList<>();
+
+//    static {
+//        t3AllowRemoveFields.add("schemaNamePath");
+//        t3AllowRemoveFields.add("customColorID");
+//        t3AllowRemoveFields.add("inventory");
+//        t3AllowRemoveFields.add("plannedArrivalTime");
+//    }
+
+    private static final List<String> t4AllowRemoveFields = new ArrayList<>();
+    static {
+        t3AllowRemoveFields.add("schemaNamePath");
+        t3AllowRemoveFields.add("customColorID");
+        t3AllowRemoveFields.add("inventory");
+        t3AllowRemoveFields.add("plannedArrivalTime");
+
+        t4AllowRemoveFields.add("planedInListTime");
+        t4AllowRemoveFields.add("planedDeListTime");
+        t4AllowRemoveFields.add("inventory");
+    }
+
+
+    @Resource
+    private ExecutorService retryWareHousingExecutor;
+
+    public TestController() {
+        System.out.println("调用构建函数实例化bean.....");
+    }
+
+//    @PostConstruct
+//    public void init(){
+//        appKey = "123";
+//        System.out.println(appKey);
+//    }
+
 
     /**@RequestBody @Valid CheckHh checkHh, BindingResult result*/
     /**
@@ -120,6 +171,31 @@ public class TestController extends BaseController{
         I18nLocaleContextHolder.reset();
     }
 
+    @PostMapping("/test/springEventTest")
+    public void springEventTest(){
+        testService.handlerTask();
+    }
+
+    @PostMapping("/test/taskHandler")
+    public void testTaskHandler(){
+        task.handler();
+    }
+
+    @PostMapping("/test/testAspectReturn")
+    public void testAspectReturn(){
+        System.out.println("结束切面，进入方法体。");
+    }
+
+    @PostMapping("/test/testLog")
+    public void testLog(){
+        log.trace("this is trace");
+        log.debug("this is debug");
+        log.info("this is info");
+        log.warn("this is warn");
+        log.error("this is error");
+        System.out.println("测试日志级别");
+    }
+
 
     @PostMapping("/test/threadtest")
     public void threadtest(String testId){
@@ -151,6 +227,7 @@ public class TestController extends BaseController{
         System.out.println("currentThread_name1_lang:"+inheritableThreadlocal.get());
         new Thread(()->{
             try {
+                System.out.println("currentThread_name2~~:"+inheritableThreadlocal.get());//继承父线程（main）的线程局部变量的值
                 inheritableThreadlocal.set("currentThread_name2");
                 Thread.sleep(5000L);
                 System.out.println("currentThread_name2:"+Thread.currentThread().getName());
@@ -168,7 +245,7 @@ public class TestController extends BaseController{
     }
 
     @PostMapping("/test/ttt")
-    public void testInit(@RequestBody @Valid TestVo testVo){
+    public Result testInit(@RequestBody @Valid TestVo testVo){
         ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         String lang = request.getHeader("lang");
@@ -177,11 +254,33 @@ public class TestController extends BaseController{
 //            throw new BizException(SystemErrorCodeEnum.PARAM_ERROR.getMsg());
 //        }
         System.out.println(JSONObject.toJSONString(testVo));
+        return Result.success();
     }
 
-    @PostMapping("/test/testI18")
-    public void testI18Code(@RequestBody TestI18 testI18){
+//    @PostMapping("/test/testEvent")
+//    public void testApplicationEvent(@RequestParam("testId") String testId){
+//        if ("001".equals(testId)){
+//            //触发事件
+//            eventPublisher.publishEvent(new AutoPushMessageEvent(this,testId));
+//        }
+//    }
 
+    @PostMapping("/test/testI18")
+    public void testI18Code(@RequestBody @Valid TestI18 testI18){
+        if ("aa".equals(testI18.getName())){
+            throw new BizException("500","不能为aa");
+        }
+        String a = "aa";
+        testService.resolve(a,
+                data->{
+            log.info("data:{}",data);
+        }
+        , incrm->{
+            if (incrm == null || incrm <=1){
+                return;
+            }
+            log.info("incrm:{}",incrm);
+        });
         System.out.println("...ok..."+appKey);
     }
 
@@ -195,6 +294,15 @@ public class TestController extends BaseController{
 
         System.out.println("test1:"+testId);
     }
+
+    @GetMapping("/test/testRequest")
+    public String testRequest(){
+        String cookie = RequestUtils.getCookie();
+        String ip = RequestUtils.getIp();
+        return ip + cookie;
+
+    }
+
     @PostMapping("/test/t2")
     public void test2(@RequestParam("testId") String testId){
         System.out.println("test2:"+testId);
@@ -369,6 +477,7 @@ public class TestController extends BaseController{
         System.out.println("ss:"+ss);
         System.out.println(JSONObject.toJSONString(testConfig.getShopSessionKeyList()));
         System.out.println(JSONObject.toJSONString(myThreadPool));
+        System.out.println(JSONObject.toJSONString(MythreadPoolTaskExecutor));
         System.out.println(JSONObject.toJSONString(templateConfig.getDetailId()));
         System.out.println(JSONObject.toJSONString(templateConfig.getSourceId()));
         System.out.println(JSONObject.toJSONString(templateConfig.getVideoId()));
@@ -395,6 +504,21 @@ public class TestController extends BaseController{
         String str1 = "方法测试1";
         String str2 = "方法测试2";
         funcT(this::myfunction,str1,str2);
+    }
+
+    @PostMapping("/test/getRemoteUrlCover")
+    public String getRemoteUrlCover(@RequestParam("remoteUrl") String remoteUrl) throws Exception {
+        try{
+            URL url = new URL(remoteUrl);
+            URLConnection urlConnection = url.openConnection();
+            InputStream openInputStream = urlConnection.getInputStream();
+            String frameFile = remoteUrl.substring(remoteUrl.lastIndexOf("/")+1);
+            String coverName = frameFile.substring(0,frameFile.indexOf(".")+1)+ "jpg";
+            return VideoUtils.fetchFrame2(openInputStream,coverName);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            throw e;
+        }
     }
 
     public int myfunction(String str2){
@@ -484,8 +608,10 @@ public class TestController extends BaseController{
 //        System.out.println("ls:"+JSONObject.toJSONString(ls));
         User l2U1 = new User("赵柳",11,"women");
         User l2U2 = new User("小芳",12,"women");
+        User l2U3 = new User("小芳",12,"women");
         l2.add(l2U1);
         l2.add(l2U2);
+        l2.add(l2U3);
 
         List<User> allUser = new ArrayList<>();
         allUser.addAll(l1);
@@ -499,6 +625,10 @@ public class TestController extends BaseController{
         //去重
         ArrayList<User> collect = allUser.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(User::getName))), ArrayList::new));
         System.out.println(JSONObject.toJSONString(collect));
+
+
+        Set<String> collect1 = l2.stream().map(User::getName).collect(Collectors.toSet());
+        System.out.println(collect1);
     }
 
     private static boolean testReturn() {
@@ -522,5 +652,7 @@ public class TestController extends BaseController{
 //        return sb.toString();
         return sb1.substring(0,3);
     }
+
+
 
 }

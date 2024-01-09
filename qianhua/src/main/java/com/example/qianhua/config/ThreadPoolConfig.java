@@ -26,7 +26,7 @@ public class ThreadPoolConfig {
     }
 
 
-    @Bean("threadPoolTaskExecutor")
+    @Bean("MythreadPoolTaskExecutor")
     public ThreadPoolTaskExecutor getThreadPoolTaskExecutor(){
         ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
         threadPoolTaskExecutor.setCorePoolSize(Runtime.getRuntime().availableProcessors() * 3);

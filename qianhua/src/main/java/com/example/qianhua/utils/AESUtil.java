@@ -121,29 +121,33 @@ public class AESUtil {
 
 
     public static void main(String[] args){
-//        System.out.println(AESUtil.encrypt("12345678", "12345678"));
+//        String password = "12345678";
+//        byte[] encrypt = AESUtil.encrypt("12345678", password);
+//        System.out.println(encrypt);
+//        System.out.println(new String(AESUtil.decrypt(encrypt,password),StandardCharsets.UTF_8));
 //        System.out.println(AESUtil.parseByte2HexStr(AESUtil.encrypt("12345678", "12345678")));
 
-        String name = "郭千华";
-        byte[] b1 = name.getBytes();
-        byte[] b2 = name.getBytes(StandardCharsets.UTF_8);
-        System.out.println("b1.length:"+b1.length);
-        System.out.println("b2.length:"+b2.length);
+        String decodedUrl = "https://scm-dam.oss-cn-shanghai.aliyuncs.com/image/genimg/baozun/ikea/DIPGU-0cuvvf000pinkrj1m2mc/synchronous8/%E4%B8%BB%E5%9B%BE%E8%A7%86%E9%A2%91/TMALL/synchronous8-%E4%B8%BB%E5%9B%BE%E8%A7%86%E9%A2%91.mp4?etag=1703239888201";
+        String localFile = decodedUrl.substring(decodedUrl.lastIndexOf("/")+1,decodedUrl.indexOf(".mp4")+4);
+        System.out.println(localFile);
 
-        System.out.println("b1:"+JSONObject.toJSONString(b1));
-        System.out.println("b2"+JSONObject.toJSONString(b2));
 
-        char[] ch = new char[100];
-
-//        byte[] b = new byte[129];
-////        int[] i = new int[100];
-////        for (int m = 0;m<i.length;m++){
-////            i[m] = m;
-////        }
-        for (int m = 0;m<b1.length;m++){
-            b1[m] = (byte) m;
-            System.out.println(b1[m]);
-        }
+//        String name = "郭千华";
+//        byte[] b1 = name.getBytes();
+//        byte[] b2 = name.getBytes(StandardCharsets.UTF_8);
+//        System.out.println("b1.length:"+b1.length);
+//        System.out.println("b2.length:"+b2.length);
+//
+//        System.out.println("b1:"+JSONObject.toJSONString(b1));
+//        System.out.println("b2"+JSONObject.toJSONString(b2));
+//
+//        char[] ch = new char[100];
+//
+//
+//        for (int m = 0;m<b1.length;m++){
+//            b1[m] = (byte) m;
+//            System.out.println(b1[m]);
+//        }
     }
 
 }

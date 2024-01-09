@@ -18,6 +18,25 @@ public class JsonTest {
 
     public static void main(String[] args) {
 
+        JSONObject j1 = new JSONObject();
+        j1.put("name","ceshi1.mp4");
+        j1.put("originalDamUrl","httaps://scm-dam.oss-cn-shanghai.aliyuncs.com/scm-dam/2023-11-09/TEST视频(377)_38d9a88d-8ce6-4192-912e-119f96b705b9.mp4");
+        j1.put("url","shttps://scm-dam-oss-cn-cdn2.baozun.com/scm-dam/2023-09-05/t1_330d44f8-d72f-4633-a72c-a5d16573d7c8.png");
+
+
+        JSONObject j2 = new JSONObject();
+        j2.put("name","ceshi1.mp4");
+        j2.put("originalDamUrl","https://scm-dam.oss-cn-shanghai.aliyuncs.com/scm-dam/2023-11-09/TEST视频(377)_38d9a88d-8ce6-4192-912e-119f96b705b9.mp4");
+        j2.put("url","shttps://scm-dam-oss-cn-cdn2.baozun.com/scm-dam/2023-09-05/t1_330d44f8-d72f-4633-a72c-a5d16573d7c8.png");
+
+        boolean both = j1.equals(j2);
+        if(both){
+            System.out.println("相同");
+        }else{
+            System.out.println("不相同");
+        }
+
+        System.out.println("============================================================");
         List<String> levelList = Arrays.asList("GAP", "女装", "", "T恤/背心").stream().filter(StringUtils::isNotBlank).collect(Collectors.toList());
         System.out.println(JSONObject.toJSONString(levelList));
 
