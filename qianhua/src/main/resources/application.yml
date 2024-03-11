@@ -3,6 +3,28 @@ server:
 spring:
   application:
     name: ttt-jddj-service
+
+
+#  datasource:
+#    maindatasource:
+#      url:
+#      name:
+#      password:
+#
+#    reportdorisdatasource:
+#      url:
+#      name:
+#      password:
+#
+#    driver-class-name:
+
+
+
+
+
+
+
+
 spring.profiles.active: sit
 
 jddj.shopSessionKeyList[0].appKey: e9c09ec7053f46cca43ce2d6409a0ff5

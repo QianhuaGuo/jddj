@@ -45,6 +45,9 @@ public class Son {
             "W", "X", "Y", "Z" };
 
     public static void main(String[] args) {
+
+
+
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
         String format = sdf.format(new Date());
 

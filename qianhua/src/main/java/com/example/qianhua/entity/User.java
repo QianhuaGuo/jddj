@@ -11,13 +11,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 public class User {
     private String name;
     private Integer age;
     private String sex;
-    private Boolean isStudent;
+//    private Boolean isStudent;
 
     public User(String name, Integer age, String sex) {
         this.name = name;

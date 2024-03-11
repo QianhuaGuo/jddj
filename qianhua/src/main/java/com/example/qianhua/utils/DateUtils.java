@@ -1,7 +1,12 @@
 package com.example.qianhua.utils;
 
+import com.example.qianhua.entity.User;
+import org.apache.poi.ss.formula.functions.T;
+
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.function.Function;
 
 public class DateUtils {
     private static final String COUNTDOWM = "您有新的天猫订单售后申请待审核，%s后将会自动同意，请及时处理！";
@@ -63,5 +68,9 @@ public class DateUtils {
 //        long day = diff / (24 * 60 * 60 * 1000);
 //        long min = ((diff / (60 * 1000)) - day * 24 * 60);
         return l;
+    }
+
+    public static <T> T getValue(Function<User,T> function){
+        return function.apply(new User("aa",2,"men"));
     }
 }

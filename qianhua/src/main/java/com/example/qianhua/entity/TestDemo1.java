@@ -58,9 +58,9 @@ public class TestDemo1 {
             Date endTime = sdf.parse(split[1].substring(split[1].indexOf("DATE:")+5));
 
         List<User> users = new ArrayList<>();
-        User l1U1 = new User("张三",15,"men",true);
-        User l1U2 = new User("李四",16,"men",true);
-        User l1U3 = new User("小芳",12,"women",true);
+        User l1U1 = new User("张三",15,"men");
+        User l1U2 = new User("李四",16,"men");
+        User l1U3 = new User("小芳",12,"women");
         users.add(l1U1);
         users.add(l1U2);
         users.add(l1U3);
@@ -78,16 +78,16 @@ public class TestDemo1 {
         System.out.println(stopWatch.prettyPrint());
         System.out.println(JSONObject.toJSONString(users));
 
-        try{
-            if (users.stream().allMatch(aa -> aa.getIsStudent())){
-                throw new BizException("自定义错误数据!");
-//                System.out.println("全是true");
-            }else{
-                System.out.println("有false");
-            }
-        }catch (Exception ex){
-            System.out.println("sdfsdf"+ex.getMessage());
-        }
+//        try{
+//            if (users.stream().allMatch(aa -> aa.getIsStudent())){
+//                throw new BizException("自定义错误数据!");
+////                System.out.println("全是true");
+//            }else{
+//                System.out.println("有false");
+//            }
+//        }catch (Exception ex){
+//            System.out.println("sdfsdf"+ex.getMessage());
+//        }
 
 
     }

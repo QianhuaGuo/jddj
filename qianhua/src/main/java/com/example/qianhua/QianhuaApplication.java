@@ -2,6 +2,7 @@ package com.example.qianhua;
 
 import com.example.qianhua.config.TestConfig1;
 import com.example.qianhua.proxy.EnableAutoDdcAdapterProxy;
+import com.example.qianhua.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jol.info.ClassLayout;
 import org.springframework.beans.factory.BeanFactory;
@@ -18,6 +19,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
@@ -29,10 +31,12 @@ import java.util.Properties;
 public class QianhuaApplication implements ApplicationRunner {
 
     public static void main(String[] args) {
+
         //System.getProperties();
 //        Object o = new Object();
 //        System.out.println(ClassLayout.parseInstance(o).toPrintable());
         ConfigurableApplicationContext context = SpringApplication.run(QianhuaApplication.class, args);
+        Map<String, UserService> beansOfType = context.getBeansOfType(UserService.class);
         ConfigurableEnvironment environment = context.getEnvironment();
         String[] activeProfiles = environment.getActiveProfiles();
         for (String profile : activeProfiles) {

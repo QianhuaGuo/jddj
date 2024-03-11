@@ -58,35 +58,33 @@ public class FileUtils {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        JSONObject j = new JSONObject();
-        j.put("code","0");
-
-        if (true){
-            j.put("code","-1");
-        }
 
         String name = "www.aaa/test1.mp4";
         System.out.println(name.substring(name.lastIndexOf("/")+1,name.lastIndexOf(".")));
 
         String url = "https://img.alicdn.com/imgextra/i3/735315515/O1CN01DGDczX1qbv7M5TRhI_!!735315515.jpg";
-//        createFileByUrl(url);
-        File localFile = new File("D:\\视频\\抖音\\test1.mp4");
-        System.out.println(localFile.getName());
-
-        String encodedUrl = "https://scm-ross-uat.oss-cn-shanghai.aliyuncs.com/image/genimg/1618454033334/_BI1443/DY0501_Z/black/DY0501_Z-%E9%A2%9C%E8%89%B2%E5%9B%BE-black.jpg?etag=1618454035892";
-        String decodedUrl = URLDecoder.decode(encodedUrl, "UTF-8");
-        String newrul = decodedUrl.substring(decodedUrl.lastIndexOf("/")+1);
-
-        Map<String,Object> mm = new HashMap<>();
-        mm.put("code","asdf");
-        JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(mm));
-        Object code = jsonObject.get("code");
-        if (code instanceof String){
-            System.out.println(JSONObject.toJSONString(code));
+        File fileByUrl = createFileByUrl(url);
+        if (fileByUrl.exists()){
+            fileByUrl.delete();
+            System.out.println("删除本地临时文件ok。。。");
         }
-
-
-        System.out.println(newrul);
+//        File localFile = new File("D:\\视频\\抖音\\test1.mp4");
+//        System.out.println(localFile.getName());
+//
+//        String encodedUrl = "https://scm-ross-uat.oss-cn-shanghai.aliyuncs.com/image/genimg/1618454033334/_BI1443/DY0501_Z/black/DY0501_Z-%E9%A2%9C%E8%89%B2%E5%9B%BE-black.jpg?etag=1618454035892";
+//        String decodedUrl = URLDecoder.decode(encodedUrl, "UTF-8");
+//        String newrul = decodedUrl.substring(decodedUrl.lastIndexOf("/")+1);
+//
+//        Map<String,Object> mm = new HashMap<>();
+//        mm.put("code","asdf");
+//        JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(mm));
+//        Object code = jsonObject.get("code");
+//        if (code instanceof String){
+//            System.out.println(JSONObject.toJSONString(code));
+//        }
+//
+//
+//        System.out.println(newrul);
 
     }
 }

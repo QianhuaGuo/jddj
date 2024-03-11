@@ -1,0 +1,1 @@
+com.example.qianhua.spi.Register = com.example.qianhua.spi.NacosRegister,com.example.qianhua.spi.ConsulRegister

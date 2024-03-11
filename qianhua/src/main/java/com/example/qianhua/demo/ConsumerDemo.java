@@ -11,17 +11,24 @@ public class ConsumerDemo {
     public static void main(String[] args) {
         List<String> list = new ArrayList<>();
 
-        createList("aa","bb",data -> {
-            System.out.println(data);
-        });
+//        createList("aa","bb",data -> {
+//            System.out.println(data);
+//        });
 
-//        System.out.println(JSONObject.toJSONString(list));
+        createList("aa","bb",data->data.forEach(a ->{
+            System.out.println(a);
+            handlerString(a);
+        }));
     }
 
-    public static void createList(String a, String b, Consumer<List<String>> data){
+    private static void handlerString(String a) {
+        System.out.println("处理："+a);
+    }
+
+    public static void createList(String a, String b, Consumer<List<String>> aa){
         List<String> c = new ArrayList<>();
         c.add(a);
         c.add(b);
-        data.accept(c);
+        aa.accept(c);
     }
 }

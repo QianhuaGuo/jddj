@@ -1,13 +1,19 @@
 package com.example.qianhua.controller;
 
+import cn.hutool.core.util.URLUtil;
+import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.baozun.i18n.context.I18nLocaleContextHolder;
 import com.example.qianhua.Result;
 import com.example.qianhua.config.*;
 import com.example.qianhua.entity.*;
+import com.example.qianhua.event.AutoPushMessageEvent;
 import com.example.qianhua.exception.BizException;
 import com.example.qianhua.filter.FilterManager;
 import com.example.qianhua.jddc.util.RequestUtils;
+import com.example.qianhua.mapStruct.NotifyConvertMapper;
+import com.example.qianhua.mapStruct.NotifyDTO;
+import com.example.qianhua.mapStruct.NotifyEntity;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.service.TaskImpl;
 import com.example.qianhua.service.TestService;
@@ -15,15 +21,25 @@ import com.example.qianhua.service.UserService;
 import com.example.qianhua.utils.SpringUtils;
 import com.example.qianhua.utils.VideoUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import okhttp3.OkHttpClient;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.coyote.Request;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -81,11 +97,14 @@ public class TestController extends BaseController{
     private ApplicationEventPublisher eventPublisher;
 
 //    @Qualifier("userServiceImpl2")
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
 
     @Autowired
     private TaskImpl task;
+
+    @Resource
+    private NotifyConvertMapper convertMapper;
 
 //    @Value("${user.name}")
 //    private String username;
@@ -257,13 +276,14 @@ public class TestController extends BaseController{
         return Result.success();
     }
 
-//    @PostMapping("/test/testEvent")
-//    public void testApplicationEvent(@RequestParam("testId") String testId){
-//        if ("001".equals(testId)){
-//            //触发事件
-//            eventPublisher.publishEvent(new AutoPushMessageEvent(this,testId));
-//        }
-//    }
+    @PostMapping("/test/testEvent")
+    public void testApplicationEvent(@RequestParam("testId") String testId){
+        if ("001".equals(testId)){
+            //触发事件
+            eventPublisher.publishEvent(new AutoPushMessageEvent(this,testId));
+        }
+        System.out.println("方法结束.....");
+    }
 
     @PostMapping("/test/testI18")
     public void testI18Code(@RequestBody @Valid TestI18 testI18){
@@ -450,8 +470,15 @@ public class TestController extends BaseController{
     }
 
     @GetMapping(value = "/test/ttt/testLog")
-    public String TestLog(String aa){
-        testService.testLog();
+    public String TestLog(String aa,HttpServletRequest requests){
+//        OkHttpClient okHttpClient = new OkHttpClient().newBuilder().addInterceptor(new CustomOkhttp3RequestInterceptor()).build();
+        log.info("请求头缺少后还往下走不？");
+        try{
+            testService.testLog();
+        }catch (Exception e){
+            log.info("e：{}",e.getMessage(),e);
+        }
+
         return "ok";
     }
 
@@ -510,6 +537,9 @@ public class TestController extends BaseController{
     public String getRemoteUrlCover(@RequestParam("remoteUrl") String remoteUrl) throws Exception {
         try{
             URL url = new URL(remoteUrl);
+            if (StringUtils.hasText(remoteUrl)){
+
+            }
             URLConnection urlConnection = url.openConnection();
             InputStream openInputStream = urlConnection.getInputStream();
             String frameFile = remoteUrl.substring(remoteUrl.lastIndexOf("/")+1);
@@ -603,6 +633,14 @@ public class TestController extends BaseController{
         l1.add(l1U4);
 //        List<User> ls = l1.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(User :: getName))), ArrayList::new));
         Map<String, String> umap = l1.stream().collect(Collectors.toMap(User::getName, User::getSex));
+//        Map<Object, Object> umap = l1.stream().collect(Collectors.toMap(user -> user.getName(),user -> user.getAge()));
+
+        Map<String, String> phoneBook
+                = l1.stream().collect(
+                Collectors.toMap(User::getName,
+                        User::getSex,
+                        (s, a) -> s + ", " + a));
+        System.out.println("phoneBook:"+JSONObject.toJSONString(phoneBook));
         System.out.println("umap:"+JSONObject.toJSONString(umap));
 
 //        System.out.println("ls:"+JSONObject.toJSONString(ls));
@@ -653,6 +691,31 @@ public class TestController extends BaseController{
         return sb1.substring(0,3);
     }
 
+    @PostMapping("/test/exel")
+    public void test(@RequestParam("fileUrl") String fileUrl){
+        List<Map<Integer, Object>> maps = resolverExcel(fileUrl);
+    }
 
+    @PostMapping("/test/mapstruct")
+    public Result test(@RequestBody NotifyEntity entity){
+        NotifyDTO notifyDTO = convertMapper.convertNotifyEntity(entity);
+        return Result.success(notifyDTO);
+    }
+
+
+    @SneakyThrows
+    private List<Map<Integer, Object>> resolverExcel(String fileUrl) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String fileUrlEncode = URLUtil.normalize(fileUrl, true);
+            HttpGet request = new HttpGet(fileUrlEncode);
+            try (CloseableHttpResponse response = client.execute(request);
+                 InputStream is = response.getEntity().getContent()) {
+                List<Map<Integer, Object>> list = EasyExcelFactory.read(is).sheet(0)
+                        .headRowNumber(0)
+                        .doReadSync();
+                return list;
+            }
+        }
+    }
 
 }

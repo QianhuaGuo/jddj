@@ -6,14 +6,20 @@
 //import com.example.qianhua.exception.BizException;
 //import com.example.qianhua.requestVo.TestVo;
 //import lombok.extern.slf4j.Slf4j;
+//import okhttp3.OkHttpClient;
 //import org.aspectj.lang.ProceedingJoinPoint;
+//import org.aspectj.lang.Signature;
 //import org.aspectj.lang.annotation.Around;
 //import org.aspectj.lang.annotation.Aspect;
+//import org.aspectj.lang.reflect.MethodSignature;
 //import org.springframework.context.annotation.Configuration;
+//import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.context.request.RequestContextHolder;
 //import org.springframework.web.context.request.ServletRequestAttributes;
 //
 //import javax.servlet.http.HttpServletRequest;
+//import java.lang.annotation.Annotation;
+//import java.lang.reflect.Method;
 //
 //@Aspect
 //@Configuration
@@ -22,6 +28,15 @@
 //
 //    @Around("execution(* com.example.qianhua.controller.TestController.*(..))")
 //    public Object around(ProceedingJoinPoint joinPoint) throws Throwable{
+//        MethodSignature signature = (MethodSignature)joinPoint.getSignature();
+//        Method method = signature.getMethod();
+//        Annotation[] annotations = method.getAnnotations();
+//        GetMapping annotation = method.getAnnotation(GetMapping.class);
+//        if (null != annotation){
+//            System.out.println("ok");
+//        }
+//
+//
 //        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 //        if (request.getServletPath().equals("/test/testAspectReturn")){
 //            return Result.success();

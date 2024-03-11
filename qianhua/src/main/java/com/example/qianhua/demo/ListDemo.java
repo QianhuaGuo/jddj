@@ -1,5 +1,6 @@
 package com.example.qianhua.demo;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.qianhua.entity.User;
 import com.example.qianhua.requestVo.TestVo;
 import com.example.qianhua.utils.ListSplitUtil;
@@ -121,18 +122,20 @@ public class ListDemo implements Serializable {
 //        TestVo t = new TestVo();
 //
         List<User> users = new ArrayList<>();
-        User l1U1 = new User("张三",15,"men",true);
-        User l1U2 = new User("张三",15,"men",true);
-        User l1U3 = new User("李四",16,"men",true);
-        User l1U4 = new User("李四",16,"men",true);
-        User l1U5 = new User("小芳",12,"women",true);
-        User l1U6 = new User("小芳",12,"women",true);
+        User l1U1 = new User("张三",15,"men");
+        User l1U2 = new User("张三",15,"men");
+        User l1U3 = new User("李四",16,"men");
+        User l1U4 = new User("李四",16,"men");
+        User l1U5 = new User("小芳",12,"women");
+        User l1U6 = new User("小芳",12,"women");
         users.add(l1U1);
         users.add(l1U2);
         users.add(l1U3);
         users.add(l1U4);
         users.add(l1U5);
         users.add(l1U6);
+
+        log.info("storeCode下的所有平台订单号{}", JSONObject.toJSONString(users.stream().map(User::getName).collect(Collectors.toSet())));
         List<User> needRemove = new ArrayList<>();
         users.stream().forEach(u -> {
             if (u.getName().equals("李四")){

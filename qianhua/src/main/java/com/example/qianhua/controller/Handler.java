@@ -2,7 +2,7 @@ package com.example.qianhua.controller;
 
 public class Handler {
     public Handler() {
-        System.out.println("handler.");
+        System.out.println("父handler.");
     }
     {
         System.out.println("父类普通代码块");
