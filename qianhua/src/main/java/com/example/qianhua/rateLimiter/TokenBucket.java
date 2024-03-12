@@ -12,6 +12,10 @@ public class TokenBucket {
     public static RateLimiter rateLimiter = RateLimiter.create(1.0);
 
     public static void main(String[] args) {
+        System.out.println(11%2);
+
+        System.out.println(11/2);
+
         for (int i = 0; i < 10; i++) {
             //尝试获取令牌，如果没有令牌则阻塞等待
             double waitTime = rateLimiter.acquire();
