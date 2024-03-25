@@ -40,6 +40,8 @@ public class DateDemo {
         LocalDate localDate = LocalDate.now();
         LocalTime localTime = LocalTime.now();
         LocalDateTime localDateTime = LocalDateTime.now();
+        localDateTime.plusDays(1);
+
 
         Date date = new Date();
         System.out.println("localDate:"+localDate);

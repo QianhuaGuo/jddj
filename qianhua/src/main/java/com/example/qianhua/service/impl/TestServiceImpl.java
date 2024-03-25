@@ -31,7 +31,7 @@ import java.util.function.Function;
 @Service()
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class TestServiceImpl implements TestService , ApplicationContextAware {
-    @Resource
+
     private ThreadPoolTaskExecutor myThreadPool;
 
     @Resource
