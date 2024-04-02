@@ -26,8 +26,11 @@ public class RedPackage {
 
     public static void main(String[] args) {
         List<Integer> amountList = divideRedPacket(1000, 10);
+        int account = 0;
         for (Integer amount : amountList) {
             System.out.println("抢到金额：" + amount);
+            account += amount;
         }
+        System.out.println("总共金额："+account);
     }
 }
